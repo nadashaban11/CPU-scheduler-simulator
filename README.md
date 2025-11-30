@@ -22,6 +22,7 @@ Currently implemented:
 -   ✔ **Arrival Time / Burst Time / Priority**
 -   ✔ **Linked List--based PCB structure**
 -   ✔ **FCFS (First-Come, First-Served)**
+-   ✔ **SJF (Shortest Job First) — Non-Preemptive**
 -   ✔ **Clean and formatted process table**
 
 ------------------------------------------------------------------------
@@ -33,8 +34,9 @@ Currently implemented:
     -   Burst Time
     -   Priority
 -   Automatic **Process ID assignment**
--   **Linked List** PCB structure\
--   **FCFS Scheduling Algorithm**\
+-   **Linked List** PCB structure
+-   **FCFS Scheduling Algorithm**
+-   **SJF (Non-Preemptive) Scheduling Algorithm**
 -   Display table including:
     -   PID
     -   Arrival
@@ -49,7 +51,6 @@ Currently implemented:
 
   Feature                                       Status
   --------------------------------------------- ------------
-  Shortest Job First (SJF) --- Non-preemptive   🔜 Planned
   SJF --- Preemptive                            🔜 Planned
   Priority Scheduling --- Non-preemptive        🔜 Planned
   Priority Scheduling --- Preemptive            🔜 Planned
