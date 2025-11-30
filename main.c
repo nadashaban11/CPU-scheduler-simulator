@@ -10,12 +10,14 @@ struct PCB {
     int priority;
     int waiting_time;
     int turnarround_time;
+    int completed;
     struct PCB* next;
 };
 
 void insertProcess(struct PCB** head, struct PCB* newProcess);
 void processes_sort(struct PCB* head);
 void FCFS(struct PCB* head);
+void SJF_nonPreemptive(struct PCB* head);
 void printProcesses(struct PCB* head);
 
 
@@ -44,6 +46,7 @@ int main() {
 
         newProcess->waiting_time = 0;
         newProcess->turnarround_time = 0;
+        newProcess->completed = 0;
         newProcess->next = NULL;
         newProcess->pId = ++idCnt;
 
@@ -54,15 +57,19 @@ int main() {
     int choice;
     printf("\nChoose Scheduling Algorithm:\n");
     printf("1. FCFS\n");
-    printf("2. SJF (Coming Soon)\n");
-    printf("3. Priority Scheduling (Coming Soon)\n");
-    printf("4. Round Robin (Coming Soon)\n");
+    printf("2. SJF (Non-Preemptive)\n");
+    printf("3. SJF (pre-Preemptive)\n");
+    printf("4. Priority Scheduling (Coming Soon)\n");
+    printf("5. Round Robin (Coming Soon)\n");
     printf("Enter your choice: ");
     scanf("%d", &choice);
 
     switch (choice) {
         case 1:
             FCFS(head);
+            break;
+        case 2:
+            SJF_nonPreemptive(head);
             break;
         default:
             printf("\nAlgorithm not implemented yet.\n");
@@ -126,6 +133,7 @@ void processes_sort(struct PCB* head){
                 tempInt = j->priority; j->priority = j->next->priority; j->next->priority = tempInt;
                 tempInt = j->waiting_time; j->waiting_time = j->next->waiting_time; j->next->waiting_time = tempInt;
                 tempInt = j->turnarround_time; j->turnarround_time = j->next->turnarround_time; j->next->turnarround_time = tempInt;
+                tempInt = j->completed; j->completed = j->next->completed; j->next->completed = tempInt;
             }
             j = j->next;
         }
@@ -147,8 +155,60 @@ void FCFS(struct PCB* head) {
 
         temp->waiting_time = cur_time - temp->arrival_time;
         temp->turnarround_time = temp->burst_time + temp->waiting_time;
+        temp->completed = 1;
 
         cur_time += temp->burst_time;
         temp = temp->next;
     }
+}
+
+
+// ------------------ 2. SJF (Non-Preemptive) Algorithm ------------------
+void SJF_nonPreemptive(struct PCB* head) {
+
+    processes_sort(head);    
+
+    int cur_time = 0;
+    int n = idCnt;       // no of all processes
+    int completed = 0;  //track completed processes 
+
+    struct PCB* temp = NULL;
+
+    while(completed < n){
+        struct PCB* shortest = NULL;
+
+        temp = head;
+
+        while(temp != NULL){
+
+            //choose arrived and not completed process
+            // if both have same burst time choose based on arrival time
+            // if both have same burst time & arrival time choose based on pId
+            
+            if(temp->completed == 0 && temp->arrival_time <= cur_time){
+                if (shortest == NULL || temp->burst_time < shortest->burst_time||
+                    (temp->burst_time == shortest->burst_time && temp->arrival_time < shortest->arrival_time) ||
+                    (temp->burst_time == shortest->burst_time && temp->arrival_time == shortest->arrival_time &&
+                    temp->pId < shortest->pId))
+                    {
+                        shortest = temp;
+                    }
+            }
+            temp = temp->next;
+        }
+
+        // no available process now
+        if(shortest == NULL){
+            cur_time++;
+            continue;
+        }
+
+        shortest->waiting_time = cur_time - shortest->arrival_time;
+        shortest->turnarround_time = shortest->waiting_time + shortest->burst_time;
+        shortest->completed = 1;
+
+        cur_time += shortest->burst_time;
+        
+        completed++;
+    }   
 }
